@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import CoreData
 
 class DetailsVC: UIViewController, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
     
@@ -52,7 +53,36 @@ class DetailsVC: UIViewController, UIImagePickerControllerDelegate, UINavigation
     
 
     @IBAction func saveButtonClicked(_ sender: Any) {
-        print("save")
+        let appDelegate = UIApplication.shared.delegate as! AppDelegate
+        let context = appDelegate.persistentContainer.viewContext
+        
+        let newPaintig = NSEntityDescription.insertNewObject(forEntityName: "Paintings", into: context)
+        
+        //Attributes
+        
+        newPaintig.setValue(nameText.text!, forKey: "name")
+        newPaintig.setValue(artistText.text!, forKey: "artist")
+        
+        if let year = Int(yearText.text!){
+            newPaintig.setValue(year, forKey: "year")
+        }
+        newPaintig.setValue(UUID(), forKey: "id") //Burada swift kendi id vericek ondan böyle kullanabiliriz.
+        
+        let data = imageView.image!.jpegData(compressionQuality: 0.5)
+        
+        newPaintig.setValue(data, forKey: "image")
+        
+        do{
+            try context.save()
+            print("success")
+        }catch{
+            print("error")
+        }
+        
+        
+        
+        
+        
     }
     
 }
